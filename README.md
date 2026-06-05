@@ -85,6 +85,18 @@ flowchart LR
     API --> UI
 ```
 
+### 总体架构图
+
+![系统总体架构图](Project/cet6word/docs/images/Overall%20System%20Architecture.png)
+
+### 功能分解图
+
+![功能分解图](Project/cet6word/docs/images/Functional%20Decomposition%20Diagram.png)
+
+### Agent 行为闭环图
+
+![Agent 行为闭环图](Project/cet6word/docs/images/Agent%20Behavior%20Loop.png)
+
 ## Agent 行为闭环
 
 | 阶段 | 本系统实现 |
@@ -117,6 +129,28 @@ flowchart LR
 | 进程视图 | 浏览器通过 SSE 与 FastAPI 保持流式连接；普通 API 使用 HTTP JSON |
 | 物理视图 | 单机部署：浏览器、Python Web 服务、SQLite 文件、DeepSeek 云端 API |
 | 场景视图 | 用户查询单词 -> Agent 生成解释 -> 写入长期记忆 -> 更新图谱 -> 生成测验 -> 回写复习计划 |
+
+### 4+1 视图图示
+
+![4+1 逻辑视图](Project/cet6word/docs/images/4%2B1%20Logical%20View.png)
+
+![4+1 开发视图](Project/cet6word/docs/images/4%2B1%20Development%20View.png)
+
+![4+1 进程视图](Project/cet6word/docs/images/4%2B1%20Process%20View.png)
+
+![4+1 物理视图](Project/cet6word/docs/images/4%2B1%20Physical%20View.png)
+
+![4+1 场景视图](Project/cet6word/docs/images/4%2B1%20Scenario%20View.png)
+
+### 关键流程图
+
+![LCEL 流式查词时序图](Project/cet6word/docs/images/LCEL%20Streaming%20Lookup%20Sequence.png)
+
+![长期记忆与复习调度](Project/cet6word/docs/images/Long-Term%20Memory%20and%20Review%20Scheduling.png)
+
+![AI 测验与反馈更新](Project/cet6word/docs/images/AI%20Quiz%20and%20Feedback%20Update.png)
+
+![知识图谱生成与可视化](Project/cet6word/docs/images/Knowledge%20Graph%20Generation%20and%20Visualization.png)
 
 ## 目录结构
 
