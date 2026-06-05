@@ -13,3 +13,5 @@ wheels/
 .env
 Project/cet6word/data/
 Project/cet6word/*.log
+Project/cet6word/docs/_tmp/
+Project/cet6word/static/_tmp/
