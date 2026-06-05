@@ -1,0 +1,13 @@
+[project]
+name = "cet6word-agent"
+version = "0.1.0"
+description = "CET-6 vocabulary learning agent deployed on Vercel"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115.0",
+  "langchain-core>=1.3.2",
+  "langchain-deepseek>=1.0.1",
+  "pydantic>=2.13.3",
+  "python-dotenv>=1.2.2",
+  "uvicorn[standard]>=0.32.0",
+]
