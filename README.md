@@ -167,6 +167,43 @@ uv run python server.py
 http://127.0.0.1:8010
 ```
 
+## Vercel 部署
+
+本项目使用 Vercel Python Runtime 部署 FastAPI。部署根目录建议选择：
+
+```text
+Project/cet6word
+```
+
+该目录下已经包含 Vercel 部署所需文件：
+
+```text
+Project/cet6word/
+├── server.py
+├── requirements.txt
+├── vercel.json
+├── .vercelignore
+└── .python-version
+```
+
+部署步骤：
+
+```bash
+cd Project/cet6word
+vercel login
+vercel link
+vercel env add DEEPSEEK_API_KEY production
+vercel env add DEEPSEEK_BASE_URL production
+vercel --prod
+```
+
+说明：
+
+- `DEEPSEEK_API_KEY` 必须在 Vercel 环境变量中配置，不能提交到 Git。
+- 本地运行使用 `Project/cet6word/data/cet6_memory.sqlite3`。
+- Vercel Serverless 环境中 SQLite 数据写入 `/tmp/cet6word`，适合课程 Demo 演示；它不是稳定的云端长期数据库。
+- 如果要作为正式多用户产品，需要替换为 Vercel Postgres、Neon、Supabase 等持久化数据库。
+
 ## API 摘要
 
 | 方法 | 路径 | 作用 |
