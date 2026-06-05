@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CET-6 Word Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="kicker">LCEL Vocabulary Lab</p>
+        <h1>CET-6 Word Studio</h1>
+      </div>
+      <div class="memory-pill">
+        <i data-lucide="database"></i>
+        <span id="memoryCount">0 words</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="lookup-pane" aria-label="word lookup">
+        <form id="lookupForm" class="search-row">
+          <label class="search-field">
+            <i data-lucide="search"></i>
+            <input id="wordInput" type="text" autocomplete="off" spellcheck="false" placeholder="ascribe">
+          </label>
+          <button id="searchBtn" type="submit">
+            <i data-lucide="send"></i>
+            <span>查询</span>
+          </button>
+        </form>
+
+        <div class="chain-strip" aria-label="LCEL chain">
+          <div class="chain-step" data-step="prompt">
+            <span>Prompt</span>
+            <small>结构化任务</small>
+          </div>
+          <div class="chain-step" data-step="llm">
+            <span>DeepSeek</span>
+            <small>流式生成</small>
+          </div>
+          <div class="chain-step" data-step="parser">
+            <span>Parser</span>
+            <small>Markdown</small>
+          </div>
+          <div class="chain-step" data-step="memory">
+            <span>Memory</span>
+            <small>SQLite</small>
+          </div>
+          <div class="chain-step" data-step="graph">
+            <span>Graph</span>
+            <small>关系网络</small>
+          </div>
+        </div>
+
+        <div id="status" class="status-line">Ready</div>
+        <article id="result" class="result-surface">
+          <div class="empty-state">
+            <span class="empty-mark">Aa</span>
+            <p>输入一个单词，开始构建你的长期词汇记忆。</p>
+          </div>
+        </article>
+
+        <section class="quiz-panel">
+          <div class="panel-head">
+            <h2>AI 测验</h2>
+            <button id="quizBtn" class="ghost-button" type="button">
+              <i data-lucide="sparkles"></i>
+              <span>生成测验</span>
+            </button>
+          </div>
+          <div id="quizCard" class="quiz-card">
+            <p>基于长期记忆生成一道选择题，答题结果会回写复习计划。</p>
+          </div>
+        </section>
+      </section>
+
+      <aside class="side-pane" aria-label="memory and graph">
+        <section class="memory-panel">
+          <div class="panel-head">
+            <h2>长期记忆</h2>
+            <i data-lucide="clock-3"></i>
+          </div>
+          <div id="memoryList" class="memory-list"></div>
+        </section>
+
+        <section class="review-panel">
+          <div class="panel-head">
+            <h2>今日复习</h2>
+            <i data-lucide="calendar-check"></i>
+          </div>
+          <div id="dueList" class="memory-list"></div>
+        </section>
+
+        <section class="import-panel">
+          <div class="panel-head">
+            <h2>批量导入</h2>
+            <i data-lucide="list-plus"></i>
+          </div>
+          <form id="importForm" class="import-form">
+            <textarea id="importWords" placeholder="输入多行单词，如&#10;ascribe&#10;attribute&#10;constrain"></textarea>
+            <button class="ghost-button fill" type="submit">
+              <i data-lucide="plus"></i>
+              <span>加入学习队列</span>
+            </button>
+          </form>
+        </section>
+
+        <section class="graph-panel">
+          <div class="panel-head">
+            <h2>知识图谱</h2>
+            <i data-lucide="network"></i>
+          </div>
+          <div class="graph-controls">
+            <select id="graphRelation" aria-label="relation filter">
+              <option value="">全部关系</option>
+              <option value="word_family">词族</option>
+              <option value="synonym">意近词</option>
+              <option value="confusable">形近词</option>
+              <option value="collocation">搭配</option>
+            </select>
+            <input id="graphSearch" type="search" placeholder="高亮/筛选单词">
+          </div>
+          <svg id="graphSvg" class="graph-svg" role="img" aria-label="word relation graph"></svg>
+          <div id="graphHint" class="graph-hint">No relations yet</div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
