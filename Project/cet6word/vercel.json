@@ -1,9 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "name": "cet6word-agent",
-  "functions": {
-    "server.py": {
-      "excludeFiles": "{tests/**,docs/**,data/**,__pycache__/**,*.log,*.sqlite3}"
-    }
-  }
+  "name": "cet6word-agent"
 }
