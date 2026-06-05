@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import Iterable
@@ -16,10 +17,10 @@ from pydantic import BaseModel, Field
 from memory_store import MASTERY_LEVELS, MemoryStore
 
 
-ROOT_DIR = Path(__file__).resolve().parents[2]
 APP_DIR = Path(__file__).resolve().parent
 STATIC_DIR = APP_DIR / "static"
-DATA_DIR = APP_DIR / "data"
+ROOT_DIR = next((path for path in [APP_DIR, *APP_DIR.parents] if (path / ".env").exists()), APP_DIR)
+DATA_DIR = Path(os.getenv("CET6WORD_DATA_DIR", "/tmp/cet6word" if os.getenv("VERCEL") else str(APP_DIR / "data")))
 
 load_dotenv(ROOT_DIR / ".env", override=True)
 
