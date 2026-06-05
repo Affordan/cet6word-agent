@@ -1,0 +1,7 @@
+__pycache__/
+tests/
+docs/
+data/
+*.log
+*.sqlite3
+.pytest_cache/
