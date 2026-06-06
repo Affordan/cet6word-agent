@@ -94,7 +94,7 @@ def test_quiz_result_api_updates_review_state(tmp_path: Path, monkeypatch):
 
 def test_deepseek_settings_accepts_base_url_alias(monkeypatch):
     monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
-    monkeypatch.setenv("DEEPSEEK_BASE_URL", "https://example.test/v1")
+    monkeypatch.setenv("DEEPSEEK_BASE_URL", "https://example.test/v1\r\n")
     monkeypatch.setenv("DEEPSEEK_MODEL", "deepseek-chat")
 
     settings = server._deepseek_settings(temperature=0.2)

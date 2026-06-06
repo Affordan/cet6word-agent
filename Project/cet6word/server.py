@@ -252,20 +252,25 @@ def _get_quiz_chain():
 
 
 def _deepseek_settings(temperature: float) -> dict:
-    api_key = os.getenv("DEEPSEEK_API_KEY")
+    api_key = _clean_env("DEEPSEEK_API_KEY")
     if not api_key:
         raise RuntimeError("DeepSeek API Key 未配置：请在 .env 或 Vercel 环境变量中设置 DEEPSEEK_API_KEY。")
 
     settings = {
-        "model": os.getenv("DEEPSEEK_MODEL", DEFAULT_DEEPSEEK_MODEL),
+        "model": _clean_env("DEEPSEEK_MODEL") or DEFAULT_DEEPSEEK_MODEL,
         "temperature": temperature,
-        "timeout": float(os.getenv("DEEPSEEK_TIMEOUT", "45")),
-        "max_retries": int(os.getenv("DEEPSEEK_MAX_RETRIES", "1")),
+        "timeout": float(_clean_env("DEEPSEEK_TIMEOUT") or "45"),
+        "max_retries": int(_clean_env("DEEPSEEK_MAX_RETRIES") or "1"),
     }
-    api_base = os.getenv("DEEPSEEK_API_BASE") or os.getenv("DEEPSEEK_BASE_URL")
+    api_base = _clean_env("DEEPSEEK_API_BASE") or _clean_env("DEEPSEEK_BASE_URL")
     if api_base:
         settings["api_base"] = api_base
     return settings
+
+
+def _clean_env(name: str) -> str | None:
+    value = os.getenv(name)
+    return value.strip() if value else None
 
 
 def _format_model_error(exc: Exception) -> str:
