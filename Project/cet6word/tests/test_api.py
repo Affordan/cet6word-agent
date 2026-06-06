@@ -109,3 +109,18 @@ def test_model_error_message_is_actionable_for_connection_error():
 
     assert "DeepSeek 连接失败" in message
     assert "DEEPSEEK_API_BASE" in message
+
+
+def test_health_api_reports_runtime_config_without_secret(tmp_path: Path, monkeypatch):
+    client, _ = make_client(tmp_path, monkeypatch)
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-secret")
+    monkeypatch.setenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+
+    response = client.get("/api/health")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "ok"
+    assert payload["deepseek"]["api_key_configured"] is True
+    assert payload["deepseek"]["base_host"] == "api.deepseek.com"
+    assert "test-secret" not in response.text

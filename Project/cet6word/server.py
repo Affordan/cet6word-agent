@@ -6,6 +6,7 @@ import json
 import os
 import re
 from pathlib import Path
+from urllib.parse import urlparse
 from typing import Iterable
 
 from dotenv import load_dotenv
@@ -160,6 +161,22 @@ async def get_graph(
     q: str | None = Query(None),
 ):
     return memory.get_graph(relation=relation, query=q)
+
+
+@app.get("/api/health")
+async def health_check():
+    api_base = _clean_env("DEEPSEEK_API_BASE") or _clean_env("DEEPSEEK_BASE_URL") or "https://api.deepseek.com/v1"
+    parsed = urlparse(api_base)
+    return {
+        "status": "ok",
+        "runtime": "vercel" if os.getenv("VERCEL") else "local",
+        "data_dir": str(DATA_DIR),
+        "deepseek": {
+            "api_key_configured": bool(_clean_env("DEEPSEEK_API_KEY")),
+            "base_host": parsed.netloc,
+            "model": _clean_env("DEEPSEEK_MODEL") or DEFAULT_DEEPSEEK_MODEL,
+        },
+    }
 
 
 def extract_relations(word: str, markdown: str) -> list[dict[str, str]]:
