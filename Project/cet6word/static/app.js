@@ -98,8 +98,20 @@
       wordInput.focus();
     });
 
+    source.addEventListener("model_error", (event) => {
+      const payload = JSON.parse(event.data);
+      setStatus(payload.message || "模型调用失败，请检查后端配置。", true);
+      setBusy(false);
+      if (source) {
+        source.close();
+        source = null;
+      }
+      wordInput.disabled = false;
+      wordInput.focus();
+    });
+
     source.addEventListener("error", (event) => {
-      let message = "查询失败，请检查服务或 API Key。";
+      let message = "浏览器与后端的 SSE 连接中断，请刷新页面或检查服务是否正在运行。";
       if (event.data) {
         try {
           message = JSON.parse(event.data).message || message;

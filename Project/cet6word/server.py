@@ -28,6 +28,8 @@ memory = MemoryStore(DATA_DIR / "cet6_memory.sqlite3")
 lookup_chain = None
 quiz_chain = None
 
+DEFAULT_DEEPSEEK_MODEL = "deepseek-v4-flash"
+
 
 class ImportRequest(BaseModel):
     words: str = Field(..., min_length=1)
@@ -75,7 +77,7 @@ async def lookup(word: str = Query(..., min_length=1, description="English word 
             yield _sse("saved", _dashboard_payload(word=normalized, relations=relations))
             yield _sse("done", {"message": "查询完成，已写入长期记忆。"})
         except Exception as exc:
-            yield _sse("error", {"message": str(exc)})
+            yield _sse("model_error", {"message": _format_model_error(exc)})
 
     return StreamingResponse(
         event_stream(),
@@ -201,7 +203,7 @@ def _get_lookup_chain():
         from langchain_core.prompts import ChatPromptTemplate
         from langchain_deepseek import ChatDeepSeek
 
-        llm = ChatDeepSeek(model="deepseek-v4-flash", temperature=0.7)
+        llm = ChatDeepSeek(**_deepseek_settings(temperature=0.7))
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
@@ -232,7 +234,7 @@ def _get_quiz_chain():
         from langchain_core.prompts import ChatPromptTemplate
         from langchain_deepseek import ChatDeepSeek
 
-        llm = ChatDeepSeek(model="deepseek-v4-flash", temperature=0.4)
+        llm = ChatDeepSeek(**_deepseek_settings(temperature=0.4))
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
@@ -247,6 +249,35 @@ def _get_quiz_chain():
         )
         quiz_chain = prompt | llm | StrOutputParser()
     return quiz_chain
+
+
+def _deepseek_settings(temperature: float) -> dict:
+    api_key = os.getenv("DEEPSEEK_API_KEY")
+    if not api_key:
+        raise RuntimeError("DeepSeek API Key 未配置：请在 .env 或 Vercel 环境变量中设置 DEEPSEEK_API_KEY。")
+
+    settings = {
+        "model": os.getenv("DEEPSEEK_MODEL", DEFAULT_DEEPSEEK_MODEL),
+        "temperature": temperature,
+        "timeout": float(os.getenv("DEEPSEEK_TIMEOUT", "45")),
+        "max_retries": int(os.getenv("DEEPSEEK_MAX_RETRIES", "1")),
+    }
+    api_base = os.getenv("DEEPSEEK_API_BASE") or os.getenv("DEEPSEEK_BASE_URL")
+    if api_base:
+        settings["api_base"] = api_base
+    return settings
+
+
+def _format_model_error(exc: Exception) -> str:
+    text = str(exc) or exc.__class__.__name__
+    lowered = text.lower()
+    if "authentication" in lowered or "api key" in lowered or "401" in lowered:
+        return "DeepSeek API Key 认证失败：请检查本地 .env 和 Vercel 环境变量 DEEPSEEK_API_KEY 是否为有效密钥。"
+    if "connection error" in lowered or "api connection" in lowered:
+        return "DeepSeek 连接失败：后端已收到浏览器请求，但无法连接模型服务。请检查 DEEPSEEK_API_BASE/DEEPSEEK_BASE_URL、网络访问和 Vercel 环境变量。"
+    if "model" in lowered and ("not found" in lowered or "invalid" in lowered):
+        return "DeepSeek 模型名称不可用：请检查 DEEPSEEK_MODEL，或改用当前账号支持的模型。"
+    return f"DeepSeek 调用失败：{text}"
 
 
 def _dashboard_payload(word: str | None = None, relations: list[dict[str, str]] | None = None) -> dict:
